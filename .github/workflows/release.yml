@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write # Required for actions/setup-node to authenticate with npm registry
+  id-token: write
 
 jobs:
   publish:
@@ -23,4 +23,4 @@ jobs:
 
       - run: npm ci
       - run: npm test
-      - run: npm publish
+      - run: npm publish --provenance --access public
