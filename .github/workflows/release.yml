@@ -30,4 +30,22 @@ jobs:
 
       - run: npm ci
       - run: npm test
+      - name: Validate OIDC only (no npm token)
+        shell: bash
+        run: |
+          echo "🔎 Validating auth method..."
+
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            echo "❌ NODE_AUTH_TOKEN is set. OIDC is NOT being used exclusively."
+            exit 1
+          fi
+
+          TOKEN=$(npm config get //registry.npmjs.org/:_authToken || true)
+          if [ "$TOKEN" != "null" ]; then
+            echo "❌ npm auth token detected in config."
+            exit 1
+          fi
+
+          echo "✅ No npm token detected. OIDC-only publish confirmed."
+
       - run: npm publish --provenance --access public
