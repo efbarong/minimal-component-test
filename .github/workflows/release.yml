@@ -24,10 +24,16 @@ jobs:
       - run: npm ci
       - run: npm test
 
-      - name: Validate npm is using OIDC
+      - name: Validate no npm auth token file
+        shell: bash
         run: |
-          if [ "$(npm config get //registry.npmjs.org/:_authToken)" != "null" ]; then
+          echo "🔍 Checking npm auth config..."
+
+          if [ -f "$HOME/.npmrc" ] && grep -E "_authToken|authToken|_auth" "$HOME/.npmrc"; then
+            echo "❌ Found npm auth token in .npmrc"
             exit 1
           fi
+
+          echo "✅ No auth token found in .npmrc"
 
       - run: npm publish --provenance --access public
